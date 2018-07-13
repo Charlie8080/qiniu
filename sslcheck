@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+
+import ssl, socket
+
+class sslcheck(object):
+    def __init__(self):
+        timeout = 3
+        socket.setdefaulttimeout(timeout)
+        ssl._create_default_https_context = ssl._create_unverified_context
+
+    def ssl(self, domain, ip):
+        ctx = ssl.create_default_context()
+        ssl._create_default_https_context = ssl._create_unverified_context
+        s = ctx.wrap_socket(socket.socket(), server_hostname=domain)
+        s.connect((ip, 443))
+
+        cert = s.getpeercert()
+
+        subject = dict(x[0] for x in cert['subject'])
+
+        issuer = dict(x[0] for x in cert['issuer'])
+        issued_by = issuer['commonName']
+        print "颁发者：" + str(issued_by)
+
+        self.list = []
+        for j in cert['subjectAltName']:
+            sslname = j[1]
+            self.list.append(sslname)
+
+        s.close()
+
+        Before = cert["notBefore"]
+        After =  cert["notAfter"]
+
+        return Before,After
+
+    def caname(self,domain):
+        splits = domain.split(".")
+        wildcard = "*." + ".".join(splits[1:])
+        for i in self.list:
+            if i == domain or i == wildcard:
+                return i
+
+
+def main(domain, ip):
+    try:
+        test = sslcheck()
+        t  = test.ssl(domain, ip)
+        ssl = test.caname(domain)
+        print "SSL Name: %s" %ssl
+        print "Before: %s" %t[0]
+        print "After:  %s" %t[1]
+    except Exception as e:
+       print e
+
+
+if __name__ == "__main__":
+    domain = raw_input("Please inpurt domain: ")
+    ip = raw_input("Please input Line or IP address: ")
+    main(domain, ip)
+
+    '''
+    #批量查询请取消注释
+    file=raw_input('Enter file path:')
+    with open(file) as f:
+        for line in f.readlines():
+            domain = line.replace("\n","")
+            print domain
+            main(domain, domain)
+            print "\n"
+    '''
