@@ -51,8 +51,6 @@ if __name__ == '__main__':
     #url = 'http://kodo.marsyu.site/v.nowyingshi.com/hls/QAWDNPYMV12114-01/QAWDNPYMV12114-01_576.m3u8'
     #url = 'http://qn.hls.ott.cibntv.net/2016/09/19/209da5bed2dc45b18b612791066dff81/1af77772505dc69b39068ecda44042e5.m3u8?k=00acf90ff452be91ae214776f0723cf7&channel=cibn&t=1525622415&ttl=86400'
 
-
-
     with open(r'ts.txt','w') as f:
         #批量提取m3u8
         #f = open(r"m3u8.txt","r")
